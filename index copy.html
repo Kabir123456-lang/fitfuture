@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitFuture – Your Health & Fitness Guide</title>
+<style>
+  :root {
+    --green: #00c853;
+    --green-dark: #009624;
+    --navy: #0d1b2a;
+    --navy-mid: #1b2e42;
+    --white: #ffffff;
+    --light: #f4f9f4;
+    --muted: #6b7c93;
+    --card-bg: #ffffff;
+    --border: #e2ece2;
+    --accent: #ff6b35;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--light); color: var(--navy); }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 1000;
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 64px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.4);
+  }
+  .nav-logo { color: var(--green); font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; cursor: pointer; }
+  .nav-logo span { color: var(--white); }
+  .nav-links { display: flex; gap: .25rem; }
+  .nav-links button {
+    background: none; border: none; color: #cdd9e5;
+    padding: .5rem 1rem; border-radius: 8px;
+    font-size: .95rem; cursor: pointer; transition: all .2s;
+  }
+  .nav-links button:hover, .nav-links button.active {
+    background: var(--green); color: var(--navy); font-weight: 600;
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1a3a2a 100%);
+    min-height: 92vh; display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 4rem 2rem; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(0,200,83,.12) 0%, transparent 70%);
+  }
+  .hero-content { position: relative; max-width: 700px; }
+  .hero-badge {
+    display: inline-block; background: rgba(0,200,83,.15); color: var(--green);
+    border: 1px solid rgba(0,200,83,.3); padding: .4rem 1.1rem;
+    border-radius: 20px; font-size: .85rem; font-weight: 600; margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; color: var(--white);
+    line-height: 1.1; margin-bottom: 1.2rem;
+  }
+  .hero h1 span { color: var(--green); }
+  .hero p {
+    font-size: 1.15rem; color: #a8bcc8; max-width: 520px; margin: 0 auto 2.5rem;
+    line-height: 1.7;
+  }
+  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--green); color: var(--navy); padding: .9rem 2rem;
+    border: none; border-radius: 12px; font-weight: 700; font-size: 1rem;
+    cursor: pointer; transition: transform .2s, box-shadow .2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,200,83,.4); }
+  .btn-outline {
+    background: transparent; color: var(--white);
+    border: 2px solid rgba(255,255,255,.3); padding: .9rem 2rem;
+    border-radius: 12px; font-weight: 600; font-size: 1rem;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,.07); }
+  .hero-stats {
+    display: flex; gap: 2.5rem; justify-content: center; flex-wrap: wrap;
+    margin-top: 4rem; padding-top: 2.5rem;
+    border-top: 1px solid rgba(255,255,255,.1);
+  }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 2rem; font-weight: 800; color: var(--green); }
+  .stat-label { font-size: .8rem; color: #7a9ab0; text-transform: uppercase; letter-spacing: .5px; margin-top: .2rem; }
+
+  /* ── SECTIONS ── */
+  section { padding: 5rem 2rem; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .section-tag {
+    display: inline-block; background: rgba(0,200,83,.1); color: var(--green-dark);
+    border: 1px solid rgba(0,200,83,.25); padding: .3rem .9rem;
+    border-radius: 20px; font-size: .78rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem;
+  }
+  h2 { font-size: clamp(1.7rem, 3.5vw, 2.6rem); font-weight: 800; margin-bottom: .75rem; line-height: 1.2; }
+  .subtitle { color: var(--muted); font-size: 1.05rem; line-height: 1.6; max-width: 600px; margin-bottom: 3rem; }
+
+  /* ── CARDS ── */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 1.5rem; }
+  .card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.8rem; transition: transform .2s, box-shadow .2s;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.08); }
+  .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .6rem; color: var(--navy); }
+  .card p { font-size: .93rem; color: var(--muted); line-height: 1.65; }
+
+  /* ── STATS BAND ── */
+  .stats-band { background: var(--navy); color: var(--white); padding: 4rem 2rem; text-align: center; }
+  .stats-band h2 { color: var(--white); margin-bottom: .5rem; }
+  .stats-band .subtitle { color: #7a9ab0; margin-bottom: 3rem; }
+  .stat-cards { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; max-width: 900px; margin: 0 auto; }
+  .stat-card { background: var(--navy-mid); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 2rem 2.5rem; min-width: 180px; }
+  .stat-card .num { font-size: 2.8rem; font-weight: 900; color: var(--green); }
+  .stat-card .lbl { font-size: .85rem; color: #8aa0b2; margin-top: .3rem; }
+
+  /* ── TIPS ── */
+  .tips-list { display: flex; flex-direction: column; gap: 1.2rem; }
+  .tip-item {
+    display: flex; gap: 1.2rem; align-items: flex-start;
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.4rem 1.6rem; transition: border-color .2s;
+  }
+  .tip-item:hover { border-color: var(--green); }
+  .tip-num {
+    min-width: 36px; height: 36px; background: var(--green); color: var(--navy);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: .9rem; flex-shrink: 0;
+  }
+  .tip-content h4 { font-weight: 700; margin-bottom: .35rem; font-size: 1rem; }
+  .tip-content p { color: var(--muted); font-size: .92rem; line-height: 1.6; }
+
+  /* ── EXERCISE PAGE ── */
+  .exercise-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #1a3a2a 100%);
+    padding: 4rem 2rem; text-align: center; color: var(--white);
+  }
+  .exercise-hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; margin-bottom: .75rem; }
+  .exercise-hero p { color: #a8bcc8; font-size: 1.05rem; }
+  .muscle-selector { background: var(--white); padding: 3rem 2rem; border-bottom: 1px solid var(--border); }
+  .muscle-selector h2 { text-align: center; margin-bottom: .5rem; }
+  .muscle-selector .sub { text-align: center; color: var(--muted); margin-bottom: 2.5rem; font-size: .95rem; }
+  .muscle-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; max-width: 700px; margin: 0 auto; }
+  .muscle-btn {
+    padding: .75rem 1.6rem; border-radius: 50px; border: 2px solid var(--border);
+    background: var(--light); color: var(--navy); font-weight: 600; font-size: .95rem;
+    cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: .5rem;
+  }
+  .muscle-btn:hover { border-color: var(--green); color: var(--green-dark); }
+  .muscle-btn.selected { background: var(--green); border-color: var(--green); color: var(--navy); }
+  .exercises-section { padding: 3rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .exercises-section h2 { margin-bottom: .4rem; }
+  .exercises-section .sub { color: var(--muted); margin-bottom: 2rem; font-size: .95rem; }
+  .exercise-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+  .ex-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: transform .2s, box-shadow .2s; }
+  .ex-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.1); }
+  .ex-card-fig { background: linear-gradient(135deg, #f0f7f0, #e8f5e8); padding: 1.5rem; display: flex; justify-content: center; align-items: center; min-height: 200px; }
+  .ex-card-body { padding: 1.4rem; }
+  .ex-card-body h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .4rem; }
+  .ex-meta { display: flex; gap: .75rem; margin-bottom: .85rem; flex-wrap: wrap; }
+  .ex-badge { background: rgba(0,200,83,.1); color: var(--green-dark); padding: .25rem .7rem; border-radius: 20px; font-size: .78rem; font-weight: 600; }
+  .ex-badge.orange { background: rgba(255,107,53,.1); color: var(--accent); }
+  .ex-card-body p { color: var(--muted); font-size: .9rem; line-height: 1.6; }
+  .ex-tips { margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--border); }
+  .ex-tips span { font-size: .8rem; color: var(--green-dark); font-weight: 600; }
+  .ex-tips p { font-size: .85rem; color: var(--muted); margin-top: .25rem; }
+
+  /* ── NUTRITION PAGE ── */
+  .nutr-hero { background: linear-gradient(135deg, #1a2a0d 0%, var(--navy) 100%); padding: 4rem 2rem; text-align: center; color: var(--white); }
+  .nutr-hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; margin-bottom: .75rem; }
+  .nutr-hero p { color: #a8bcc8; font-size: 1.05rem; }
+  .macro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+  .macro-card { border-radius: 16px; padding: 2rem; text-align: center; color: var(--white); }
+  .macro-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: .5rem; }
+  .macro-card p { font-size: .9rem; opacity: .85; line-height: 1.6; }
+  .macro-pct { font-size: 2.5rem; font-weight: 900; margin-bottom: .5rem; }
+  .macro-carbs { background: linear-gradient(135deg, #1565c0, #1976d2); }
+  .macro-protein { background: linear-gradient(135deg, #c62828, #e53935); }
+  .macro-fat { background: linear-gradient(135deg, #e65100, #f4511e); }
+  .food-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+  .food-table th { background: var(--navy); color: var(--white); padding: .9rem 1.2rem; text-align: left; font-size: .85rem; text-transform: uppercase; letter-spacing: .5px; }
+  .food-table tr:nth-child(even) { background: var(--light); }
+  .food-table td { padding: .85rem 1.2rem; font-size: .92rem; border-bottom: 1px solid var(--border); }
+  .food-tag { display: inline-block; padding: .2rem .65rem; border-radius: 20px; font-size: .75rem; font-weight: 600; }
+  .tag-green { background: rgba(0,200,83,.15); color: var(--green-dark); }
+  .tag-orange { background: rgba(255,107,53,.15); color: var(--accent); }
+  .meal-plan { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  .meal-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; border-top: 4px solid var(--green); }
+  .meal-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; color: var(--navy); }
+  .meal-card ul { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
+  .meal-card li { font-size: .9rem; color: var(--muted); display: flex; align-items: center; gap: .5rem; }
+  .meal-card li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+  /* ── FOOTER ── */
+  footer { background: var(--navy); color: #7a9ab0; text-align: center; padding: 2.5rem 2rem; font-size: .88rem; }
+  footer span { color: var(--green); font-weight: 700; }
+
+  @media (max-width: 680px) {
+    .nav-links button { padding: .4rem .6rem; font-size: .82rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Fit<span>Future</span></div>
+  <div class="nav-links">
+    <button onclick="showPage('home')" id="nav-home" class="active">Home</button>
+    <button onclick="showPage('exercise')" id="nav-exercise">Exercise</button>
+    <button onclick="showPage('nutrition')" id="nav-nutrition">Nutrition</button>
+  </div>
+</nav>
+
+<!-- ═══════════════ HOME PAGE ═══════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">🇸🇬 Built for Singapore Youth</div>
+      <h1>Your Journey to a <span>Healthier Future</span> Starts Here</h1>
+      <p>FitFuture is your go-to guide for building sustainable health and fitness habits — designed for young Singaporeans ready to take charge of their wellbeing.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showPage('exercise')">Start Training →</button>
+        <button class="btn-outline" onclick="showPage('nutrition')">Explore Nutrition</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">37%</div>
+          <div class="stat-label">of SG youth are insufficiently active</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">1 in 3</div>
+          <div class="stat-label">skip breakfast daily</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">150 min</div>
+          <div class="stat-label">weekly activity recommended</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section style="background: var(--white);">
+    <div class="container">
+      <div class="section-tag">Why It Matters</div>
+      <h2>Health Is Your Greatest Asset</h2>
+      <p class="subtitle">In Singapore's fast-paced academic environment, it's easy to put your health on the back burner. But building good habits now pays dividends for life.</p>
+      <div class="cards-grid">
+        <div class="card"><div class="card-icon">🧠</div><h3>Better Academic Performance</h3><p>Regular exercise increases blood flow to the brain, improving focus, memory, and cognitive function — crucial during exam seasons and project deadlines.</p></div>
+        <div class="card"><div class="card-icon">😴</div><h3>Improved Sleep Quality</h3><p>Physical activity regulates your circadian rhythm and reduces cortisol levels, helping you fall asleep faster and wake up more refreshed.</p></div>
+        <div class="card"><div class="card-icon">💪</div><h3>Stronger Immune System</h3><p>Consistent moderate exercise boosts your immune response, helping your body fight infections and recover faster when you're under stress.</p></div>
+        <div class="card"><div class="card-icon">🧘</div><h3>Mental Health Benefits</h3><p>Exercise releases endorphins, serotonin, and dopamine — natural mood elevators that reduce anxiety and depression, which affect 1 in 7 Singapore youth.</p></div>
+        <div class="card"><div class="card-icon">⚡</div><h3>More Energy Daily</h3><p>Contrary to popular belief, working out gives you more energy throughout the day by improving cardiovascular efficiency and metabolic rate.</p></div>
+        <div class="card"><div class="card-icon">🎯</div><h3>Long-Term Disease Prevention</h3><p>Singapore has one of Asia's highest diabetes rates. Staying active and eating well now dramatically reduces your risk of chronic diseases later in life.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats-band">
+    <div class="container">
+      <div class="section-tag" style="background: rgba(0,200,83,.15); color: var(--green); border-color: rgba(0,200,83,.3);">Singapore Health Facts</div>
+      <h2>The State of Youth Health in Singapore</h2>
+      <p class="subtitle">Data from the Health Promotion Board (HPB) and Ministry of Health Singapore paints a clear picture — and a clear opportunity.</p>
+      <div class="stat-cards">
+        <div class="stat-card"><div class="num">40%</div><div class="lbl">of youth aged 15–24 do not meet recommended physical activity levels</div></div>
+        <div class="stat-card"><div class="num">11.6%</div><div class="lbl">obesity rate among Singaporean adults, rising among teens</div></div>
+        <div class="stat-card"><div class="num">#1</div><div class="lbl">diabetes prevalence in Southeast Asia among developed nations</div></div>
+        <div class="stat-card"><div class="num">73%</div><div class="lbl">of students report high academic stress impacting health behaviours</div></div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="container">
+      <div class="section-tag">Quick Start Guide</div>
+      <h2>10 Essential Health Tips for Singapore Youth</h2>
+      <p class="subtitle">Simple, actionable habits you can start today — no gym membership required.</p>
+      <div class="tips-list">
+        <div class="tip-item"><div class="tip-num">1</div><div class="tip-content"><h4>Move for at least 30 minutes daily</h4><p>This doesn't have to mean hitting the gym. A brisk walk at East Coast Park, cycling, or swimming at your local CC pool all count. Aim for 150 minutes of moderate activity per week — HPB's recommended minimum.</p></div></div>
+        <div class="tip-item"><div class="tip-num">2</div><div class="tip-content"><h4>Eat breakfast every day</h4><p>Skip the sugar-laden kaya toast if you can. Opt for a bowl of oats with fruit, eggs with wholegrain bread, or even a warm bowl of yong tau foo soup — protein and complex carbs to fuel your morning.</p></div></div>
+        <div class="tip-item"><div class="tip-num">3</div><div class="tip-content"><h4>Hydrate with water, not bubble tea</h4><p>The average cup of bubble tea contains 300–700 calories. Singapore's heat means you need at least 2–2.5 litres of water daily. Carry a reusable bottle everywhere.</p></div></div>
+        <div class="tip-item"><div class="tip-num">4</div><div class="tip-content"><h4>Sleep 7–9 hours every night</h4><p>Singapore consistently ranks among the world's most sleep-deprived nations. Sleep is when your muscles rebuild, your memory consolidates, and your hormones reset. No amount of caffeine can replace it.</p></div></div>
+        <div class="tip-item"><div class="tip-num">5</div><div class="tip-content"><h4>Limit screen time before bed</h4><p>Blue light from phones and laptops suppresses melatonin production, delaying sleep onset by up to 90 minutes. Set a screen curfew 1 hour before sleep — read, stretch, or meditate instead.</p></div></div>
+        <div class="tip-item"><div class="tip-num">6</div><div class="tip-content"><h4>Choose the stairs over the lift</h4><p>With Singapore's abundant HDB blocks, taking the stairs is an easy way to build cardiovascular fitness into your daily routine without setting aside extra time.</p></div></div>
+        <div class="tip-item"><div class="tip-num">7</div><div class="tip-content"><h4>Eat more hawker centre vegetables</h4><p>Singapore's hawker culture is rich with vegetable-heavy dishes — chai tow kueh, yong tau foo, and mixed vegetable rice are affordable, nutritious options available everywhere.</p></div></div>
+        <div class="tip-item"><div class="tip-num">8</div><div class="tip-content"><h4>Take mental health breaks seriously</h4><p>School and social pressures are real. Practice the 5-4-3-2-1 grounding technique, try journaling, or speak to a school counsellor. Mental fitness is just as important as physical fitness.</p></div></div>
+        <div class="tip-item"><div class="tip-num">9</div><div class="tip-content"><h4>Warm up and cool down every workout</h4><p>5 minutes of dynamic stretching before and 5 minutes of static stretching after every workout dramatically reduces injury risk and speeds up recovery — a habit most beginners skip.</p></div></div>
+        <div class="tip-item"><div class="tip-num">10</div><div class="tip-content"><h4>Find a workout buddy</h4><p>Accountability is the #1 predictor of long-term fitness success. Whether it's a classmate, CCA friend, or sibling — having someone to train with makes all the difference on days you don't feel motivated.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer><p>© 2025 <span>FitFuture</span> · Built for Singapore Youth · All rights reserved</p><p style="margin-top:.5rem; font-size:.8rem;">Information sourced from HPB Singapore & MOH Singapore. Not a substitute for medical advice.</p></footer>
+</div>
+
+<!-- ═══════════════ EXERCISE PAGE ═══════════════ -->
+<div class="page" id="page-exercise">
+  <div class="exercise-hero">
+    <div class="section-tag" style="background: rgba(0,200,83,.15); color: var(--green);">Get Moving</div>
+    <h1>Exercise Library</h1>
+    <p>Choose a muscle group below to see targeted exercises with proper form guides.</p>
+  </div>
+  <div class="muscle-selector">
+    <h2>Select a Muscle Group</h2>
+    <p class="sub">Pick the area you want to train today</p>
+    <div class="muscle-grid">
+      <button class="muscle-btn selected" onclick="selectMuscle('chest',this)">🫁 Chest</button>
+      <button class="muscle-btn" onclick="selectMuscle('back',this)">🔙 Back</button>
+      <button class="muscle-btn" onclick="selectMuscle('arms',this)">💪 Arms</button>
+      <button class="muscle-btn" onclick="selectMuscle('core',this)">⭕ Core</button>
+      <button class="muscle-btn" onclick="selectMuscle('legs',this)">🦵 Legs</button>
+      <button class="muscle-btn" onclick="selectMuscle('shoulders',this)">🏋️ Shoulders</button>
+    </div>
+  </div>
+  <div class="exercises-section">
+    <h2 id="ex-heading">Chest Exercises</h2>
+    <p class="sub" id="ex-sub">Build a strong, defined chest with these bodyweight and resistance movements.</p>
+    <div class="exercise-cards" id="exercise-cards"></div>
+  </div>
+  <footer><p>© 2025 <span>FitFuture</span> · Always consult a professional before starting a new training programme.</p></footer>
+</div>
+
+<!-- ═══════════════ NUTRITION PAGE ═══════════════ -->
+<div class="page" id="page-nutrition">
+  <div class="nutr-hero">
+    <div class="section-tag" style="background: rgba(0,200,83,.15); color: var(--green);">Fuel Your Body</div>
+    <h1>Nutrition Guide</h1>
+    <p>Everything you need to know about eating well — the Singapore-smart way.</p>
+  </div>
+
+  <section style="background: var(--white);">
+    <div class="container">
+      <div class="section-tag">The Basics</div>
+      <h2>Understanding Macronutrients</h2>
+      <p class="subtitle">Your body runs on three main macronutrients. Getting the right balance is key to energy, muscle growth, and overall health.</p>
+      <div class="macro-grid">
+        <div class="macro-card macro-carbs"><div class="macro-pct">45–65%</div><h3>Carbohydrates</h3><p>Your primary energy source. Choose complex carbs like brown rice, oats, and wholegrain bread over refined sugars. They release energy slowly and keep you fuller for longer.</p></div>
+        <div class="macro-card macro-protein"><div class="macro-pct">10–35%</div><h3>Protein</h3><p>Essential for muscle repair and growth. Aim for 0.8–1.2g per kg of body weight daily. Good local sources: eggs, tofu, tempeh, fish, and chicken rice.</p></div>
+        <div class="macro-card macro-fat"><div class="macro-pct">20–35%</div><h3>Healthy Fats</h3><p>Vital for brain function and hormone production. Choose unsaturated fats from avocado, nuts, and oily fish like salmon and sardines over saturated fats.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-tag">Singapore Context</div>
+      <h2>Healthy Hawker Centre Choices</h2>
+      <p class="subtitle">Eating healthy in Singapore doesn't mean giving up hawker food. Here's how to make smarter choices at your local hawker centre.</p>
+      <div style="overflow-x: auto;">
+        <table class="food-table">
+          <thead><tr><th>Dish</th><th>Approx. Calories</th><th>Key Nutrients</th><th>Rating</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Yong Tau Foo (soup)</strong></td><td>~300 kcal</td><td>High protein, vitamins, low fat</td><td><span class="food-tag tag-green">Excellent</span></td></tr>
+            <tr><td><strong>Mixed Veg Rice (Cai Fan)</strong></td><td>~400–500 kcal</td><td>Balanced macros, high fibre</td><td><span class="food-tag tag-green">Great</span></td></tr>
+            <tr><td><strong>Sliced Fish Soup (no rice)</strong></td><td>~200 kcal</td><td>High protein, omega-3, low cal</td><td><span class="food-tag tag-green">Excellent</span></td></tr>
+            <tr><td><strong>Chicken Rice (steamed)</strong></td><td>~500 kcal</td><td>Good protein, balanced</td><td><span class="food-tag tag-green">Good</span></td></tr>
+            <tr><td><strong>Ban Mian (dry)</strong></td><td>~450 kcal</td><td>Good protein, moderate carbs</td><td><span class="food-tag tag-green">Good</span></td></tr>
+            <tr><td><strong>Wonton Mee (dry)</strong></td><td>~550 kcal</td><td>Moderate protein, high sodium</td><td><span class="food-tag tag-orange">Moderate</span></td></tr>
+            <tr><td><strong>Nasi Lemak (full set)</strong></td><td>~700–900 kcal</td><td>High fat, high sodium</td><td><span class="food-tag tag-orange">Occasional</span></td></tr>
+            <tr><td><strong>Char Kway Teow</strong></td><td>~740 kcal</td><td>High fat, high sodium</td><td><span class="food-tag tag-orange">Occasional</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: var(--white);">
+    <div class="container">
+      <div class="section-tag">HPB Guidelines</div>
+      <h2>My Healthy Plate</h2>
+      <p class="subtitle">The Health Promotion Board's "My Healthy Plate" model recommends filling your plate in this proportion at every meal.</p>
+      <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: flex-start;">
+        <div style="flex: 1; min-width: 260px;">
+          <svg viewBox="0 0 320 320" width="100%" style="max-width:320px; display:block; margin:0 auto;">
+            <circle cx="160" cy="160" r="155" fill="#f5f5f5" stroke="#ddd" stroke-width="2"/>
+            <path d="M160,160 L160,10 A150,150 0 0,1 310,160 Z" fill="#ffd54f"/>
+            <path d="M160,160 L10,160 A150,150 0 0,1 160,10 Z" fill="#81c784"/>
+            <path d="M160,160 L310,160 A150,150 0 0,1 160,310 Z" fill="#66bb6a"/>
+            <path d="M160,160 L160,310 A150,150 0 0,1 10,160 Z" fill="#ef9a9a"/>
+            <text x="218" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="#5d4037">Wholegrains</text>
+            <text x="218" y="126" text-anchor="middle" font-size="11" fill="#5d4037">¼ of plate</text>
+            <text x="100" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#2e7d32">Fruits &amp;</text>
+            <text x="100" y="116" text-anchor="middle" font-size="13" font-weight="700" fill="#2e7d32">Vegetables</text>
+            <text x="100" y="132" text-anchor="middle" font-size="11" fill="#2e7d32">½ of plate</text>
+            <text x="100" y="218" text-anchor="middle" font-size="13" font-weight="700" fill="#b71c1c">Meat &amp;</text>
+            <text x="100" y="234" text-anchor="middle" font-size="13" font-weight="700" fill="#b71c1c">Others</text>
+            <text x="100" y="250" text-anchor="middle" font-size="11" fill="#b71c1c">¼ of plate</text>
+            <line x1="160" y1="10" x2="160" y2="310" stroke="white" stroke-width="3"/>
+            <line x1="10" y1="160" x2="310" y2="160" stroke="white" stroke-width="3"/>
+          </svg>
+        </div>
+        <div style="flex: 2; min-width: 260px;">
+          <div class="cards-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="card" style="border-top: 4px solid #81c784;"><div class="card-icon">🥦</div><h3>Fruits & Vegetables (½)</h3><p>Fill half your plate with colourful produce. Aim for 2 servings of fruit and 2 of vegetables daily. Local picks: papaya, guava, kangkong, broccoli, bak choy.</p></div>
+            <div class="card" style="border-top: 4px solid #ffd54f;"><div class="card-icon">🍚</div><h3>Wholegrains (¼)</h3><p>Choose brown rice over white rice, wholemeal bread over white. These contain more fibre, vitamins, and minerals, and have a lower glycaemic index to control blood sugar.</p></div>
+            <div class="card" style="border-top: 4px solid #ef9a9a;"><div class="card-icon">🥚</div><h3>Meat & Others (¼)</h3><p>Lean meats, fish, eggs, tofu, and legumes. Prioritise fish (aim for 2x per week), plant proteins like tofu and tempeh, and limit processed meats.</p></div>
+            <div class="card" style="border-top: 4px solid #80deea;"><div class="card-icon">💧</div><h3>Hydration</h3><p>Drink water with every meal. In Singapore's climate, aim for 2–2.5 litres daily. Coconut water is a great natural electrolyte drink after workouts.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-tag">Sample Meal Plan</div>
+      <h2>A Day of Healthy Eating</h2>
+      <p class="subtitle">A realistic, affordable meal plan for a Singapore student — using food available at school canteens, hawker centres, and supermarkets.</p>
+      <div class="meal-plan">
+        <div class="meal-card"><h4>🌅 Breakfast (7–8am)</h4><ul><li>Wholemeal kaya toast (less butter)</li><li>2 soft-boiled eggs</li><li>Teh kosong or black coffee</li><li>1 piece of fruit (banana/apple)</li></ul></div>
+        <div class="meal-card"><h4>🍱 Lunch (12–1pm)</h4><ul><li>Brown rice (¼ plate)</li><li>Steam chicken or tofu</li><li>2 vegetable dishes (cai fan)</li><li>Soup with clear broth</li></ul></div>
+        <div class="meal-card"><h4>🍎 Snack (3–4pm)</h4><ul><li>A handful of unsalted nuts</li><li>1 fruit (watermelon/papaya)</li><li>Low-fat yogurt</li><li>Plain water or coconut water</li></ul></div>
+        <div class="meal-card"><h4>🌙 Dinner (6–7pm)</h4><ul><li>Yong tau foo (soup base)</li><li>Lots of tofu & vegetables</li><li>Sliced fish or fish cake</li><li>Plain water with lemon</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: var(--navy); color: var(--white);">
+    <div class="container">
+      <div class="section-tag" style="background: rgba(0,200,83,.15); color: var(--green);">Watch Out For</div>
+      <h2 style="color: var(--white);">Common Nutrition Mistakes to Avoid</h2>
+      <p class="subtitle">Even well-intentioned choices can backfire. Here are the most common pitfalls Singapore youth fall into.</p>
+      <div class="cards-grid">
+        <div class="card" style="background: var(--navy-mid); border-color: rgba(255,255,255,.1);"><div class="card-icon">🧋</div><h3 style="color: var(--white);">Liquid Sugar Overload</h3><p>Bubble tea, Milo, packet drinks — liquid calories add up fast. A large brown sugar boba can pack 500+ calories and 60g of sugar. Switch to water, teh kosong, or unsweetened drinks.</p></div>
+        <div class="card" style="background: var(--navy-mid); border-color: rgba(255,255,255,.1);"><div class="card-icon">⏰</div><h3 style="color: var(--white);">Skipping Meals to Lose Weight</h3><p>Skipping meals slows your metabolism and triggers binge-eating later. Eat regular small meals to maintain stable blood sugar and energy throughout the day.</p></div>
+        <div class="card" style="background: var(--navy-mid); border-color: rgba(255,255,255,.1);"><div class="card-icon">🍟</div><h3 style="color: var(--white);">Over-reliance on Fast Food</h3><p>McValue meals and fried chicken are convenient but loaded with trans fats, sodium, and empty calories. Limit to once a week and always add a salad or vegetables on the side.</p></div>
+        <div class="card" style="background: var(--navy-mid); border-color: rgba(255,255,255,.1);"><div class="card-icon">💊</div><h3 style="color: var(--white);">Supplement Dependency</h3><p>Protein powders, fat burners, and pre-workouts are largely unnecessary for most teens. Focus on whole foods first. Supplements supplement — they don't replace — a solid diet.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer><p>© 2025 <span>FitFuture</span> · Nutritional advice based on HPB Singapore guidelines.</p></footer>
+</div>
+
+<script>
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+const exercises = {
+  chest: { heading: 'Chest Exercises', sub: 'Build a strong, defined chest with these bodyweight and resistance movements.', list: [
+    { name: 'Push-Up', sets: '3 sets × 12–15 reps', level: 'Beginner', desc: 'The classic upper-body exercise. Targets chest, shoulders, and triceps simultaneously. Keep your core tight and body in a straight line throughout.', tip: 'Keep elbows at 45° — not flared wide. Lower chest all the way to the floor for full range.', svg: svgPushup() },
+    { name: 'Diamond Push-Up', sets: '3 sets × 8–12 reps', level: 'Intermediate', desc: 'Place hands in a diamond shape under your chest. This variation increases the load on the inner chest and triceps significantly.', tip: 'If too hard, do it from your knees. Keep hips level — don\'t pike up.', svg: svgDiamondPushup() },
+    { name: 'Wide Push-Up', sets: '3 sets × 10–15 reps', level: 'Beginner', desc: 'Hands placed wider than shoulder-width. This variant targets the outer chest and reduces tricep involvement.', tip: 'Control the descent — 2 counts down, 1 count up. Don\'t let your hips sag.', svg: svgWidePushup() },
+    { name: 'Incline Push-Up', sets: '3 sets × 12–20 reps', level: 'Beginner', desc: 'Hands on an elevated surface (bench, chair). Reduces load and targets the lower chest. Great for beginners building up to standard push-ups.', tip: 'Use a sturdy surface. The higher the surface, the easier the exercise.', svg: svgInclinePushup() }
+  ]},
+  back: { heading: 'Back Exercises', sub: 'Strengthen your back for better posture, reduced injury risk, and a powerful physique.', list: [
+    { name: 'Pull-Up', sets: '3 sets × 5–10 reps', level: 'Intermediate', desc: 'The king of back exercises. Grip a bar with hands slightly wider than shoulders, palms facing away. Pull chest to bar, then lower slowly.', tip: 'Engage your lats before pulling — imagine squeezing oranges in your armpits. Go full dead hang between reps.', svg: svgPullup() },
+    { name: 'Superman Hold', sets: '3 sets × 10 reps (3s hold)', level: 'Beginner', desc: 'Lie face down on the floor, extend arms forward. Simultaneously lift arms, chest, and legs off the ground. Hold for 3 seconds at the top.', tip: 'Don\'t strain your neck — look down at the floor throughout the movement.', svg: svgSuperman() },
+    { name: 'Bent-Over Row', sets: '3 sets × 12 reps each side', level: 'Beginner', desc: 'Hinge forward at hips, back flat. Row a weight (backpack, water bottle) toward your hip. Great for lats, rhomboids, and rear deltoids.', tip: 'Keep back neutral — no rounding. Pull with your elbow, not your hand.', svg: svgBentRow() },
+    { name: 'Reverse Snow Angel', sets: '3 sets × 15 reps', level: 'Beginner', desc: 'Lie face down, arms by sides. Sweep arms overhead like a snow angel while keeping them off the ground the whole time. Works the entire back.', tip: 'Move slowly and controlled. Keep thumbs pointing upward throughout.', svg: svgSuperman() }
+  ]},
+  arms: { heading: 'Arm Exercises', sub: 'Develop strong, functional arms with these targeted movements for biceps and triceps.', list: [
+    { name: 'Bicep Curl', sets: '3 sets × 12–15 reps', level: 'Beginner', desc: 'Stand tall, hold weights at sides with palms facing forward. Curl weights toward shoulders without swinging. Lower slowly.', tip: 'Squeeze the bicep hard at the top. Control the negative — take 2–3 seconds on the way down.', svg: svgBicepCurl() },
+    { name: 'Tricep Dip', sets: '3 sets × 10–15 reps', level: 'Beginner', desc: 'Sit on edge of chair/bench, hands beside hips. Slide off and lower body by bending elbows to 90°, then push back up.', tip: 'Keep your back close to the chair. The further your feet are, the harder the movement.', svg: svgTricepDip() },
+    { name: 'Hammer Curl', sets: '3 sets × 12 reps', level: 'Beginner', desc: 'Same as bicep curl but with palms facing each other (neutral grip). Targets the brachialis and brachioradialis for thicker-looking arms.', tip: 'Don\'t swing. Keep elbows tucked to your sides throughout the movement.', svg: svgBicepCurl() },
+    { name: 'Diamond Push-Up (Triceps)', sets: '3 sets × 8–12 reps', level: 'Intermediate', desc: 'Form a diamond shape with your hands under your chest. This targets the triceps as the primary mover — essential for arm size and pushing strength.', tip: 'Keep elbows tracking backwards, not flaring out to the sides.', svg: svgDiamondPushup() }
+  ]},
+  core: { heading: 'Core Exercises', sub: 'A strong core is the foundation of every athletic movement and helps prevent lower back pain.', list: [
+    { name: 'Plank', sets: '3 sets × 30–60 seconds', level: 'Beginner', desc: 'Support yourself on forearms and toes in a straight line. Keep hips level — not raised or sagging. Breathe steadily throughout.', tip: 'Squeeze glutes and abs as hard as you can. Imagine someone is about to punch you in the stomach.', svg: svgPlank() },
+    { name: 'Crunch', sets: '3 sets × 20 reps', level: 'Beginner', desc: 'Lie on back, knees bent. Curl upper back off floor using abs, not neck. Lower slowly. Focus on the contraction, not the range of motion.', tip: 'Hands lightly behind head — don\'t pull your neck. Exhale as you crunch up.', svg: svgCrunch() },
+    { name: 'Mountain Climber', sets: '3 sets × 20 reps per leg', level: 'Intermediate', desc: 'In push-up position, drive one knee toward chest, then quickly switch legs. Maintains cardiovascular intensity while targeting the entire core.', tip: 'Keep hips level and don\'t bounce them up. Move faster for cardio, slower for core focus.', svg: svgMountainClimber() },
+    { name: 'Leg Raise', sets: '3 sets × 12–15 reps', level: 'Intermediate', desc: 'Lie flat, hands under glutes. Keeping legs straight, raise them to 90° then lower slowly without touching the floor. Targets lower abs.', tip: 'Press lower back into floor throughout. If too hard, bend your knees slightly.', svg: svgLegRaise() }
+  ]},
+  legs: { heading: 'Leg Exercises', sub: 'Build powerful legs — the largest muscle group in your body, crucial for metabolism and athleticism.', list: [
+    { name: 'Bodyweight Squat', sets: '3 sets × 15–20 reps', level: 'Beginner', desc: 'Feet shoulder-width apart, toes slightly out. Lower as if sitting in a chair until thighs are parallel to floor. Drive through heels to stand.', tip: 'Chest up, knees track over toes. Don\'t let heels come off the floor. Depth is more important than speed.', svg: svgSquat() },
+    { name: 'Forward Lunge', sets: '3 sets × 12 reps each leg', level: 'Beginner', desc: 'Step forward, lower back knee toward floor. Front thigh should be parallel to floor. Push through front heel to return to start.', tip: 'Keep torso upright — don\'t lean forward. Back knee should hover about 2cm from floor.', svg: svgLunge() },
+    { name: 'Calf Raise', sets: '3 sets × 20–25 reps', level: 'Beginner', desc: 'Stand on edge of step or flat floor. Rise onto tiptoes as high as possible, hold 1 second, lower slowly. Great for lower leg definition.', tip: 'For best results, do these on a step and allow full stretch at the bottom before rising.', svg: svgCalfRaise() },
+    { name: 'Wall Sit', sets: '3 sets × 30–60 seconds', level: 'Beginner', desc: 'Lean against wall, slide down until thighs are parallel to floor. Hold position. Burns quads intensely.', tip: 'Keep back flat against wall. Don\'t rest hands on thighs — arms straight for extra challenge.', svg: svgWallSit() }
+  ]},
+  shoulders: { heading: 'Shoulder Exercises', sub: 'Build wide, strong shoulders that improve posture and overall upper-body presence.', list: [
+    { name: 'Pike Push-Up', sets: '3 sets × 8–12 reps', level: 'Beginner', desc: 'Get into downward dog position (hips high, body in inverted V). Bend elbows and lower head toward floor, then push back up. Targets deltoids.', tip: 'The more vertical your torso, the harder it is. Keep core tight and feet hip-width apart.', svg: svgPikePushup() },
+    { name: 'Lateral Raise', sets: '3 sets × 15 reps', level: 'Beginner', desc: 'Hold weights at sides. Raise arms out to sides until they reach shoulder height. Lower slowly. Targets the medial deltoid for shoulder width.', tip: 'Slightly bend elbows throughout. Lead with elbows, not wrists. Don\'t shrug.', svg: svgLateralRaise() },
+    { name: 'Front Raise', sets: '3 sets × 12 reps', level: 'Beginner', desc: 'Hold weights in front of thighs. Raise one or both arms forward to shoulder height. Lower slowly. Targets anterior (front) deltoid.', tip: 'Don\'t lean back or use momentum. Keep movement slow and controlled.', svg: svgFrontRaise() },
+    { name: 'Shoulder Press (seated)', sets: '3 sets × 10–12 reps', level: 'Intermediate', desc: 'Sit upright holding weights at shoulder level, elbows at 90°. Press overhead until arms are nearly straight. Lower to starting position.', tip: 'Keep core braced. Don\'t arch lower back — sit against a wall if needed for support.', svg: svgShoulderPress() }
+  ]}
+};
+
+function head(cx,cy,r=14){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#2d3748" stroke="#1a202c" stroke-width="1.5"/>`;}
+function line(x1,y1,x2,y2,w=5,color='#2d3748'){return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${w}" stroke-linecap="round"/>`;}
+function svgWrap(c,w=200,h=200){return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 4px 8px rgba(0,0,0,.08))">${c}</svg>`;}
+function svgPushup(){return svgWrap(`${head(45,90,12)}${line(45,102,130,115,6)}${line(130,115,162,115,6)}${line(162,115,164,130,6)}${line(45,102,46,118,6)}${line(46,118,45,133,6)}${line(75,108,76,135,5,'#4a5568')}${line(76,135,60,155,5,'#4a5568')}${line(76,135,92,155,5,'#4a5568')}<text x="100" y="175" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Push-Up</text>`,200,185);}
+function svgDiamondPushup(){return svgWrap(`${head(45,88,12)}${line(45,100,130,112,6)}${line(130,112,160,112,6)}${line(160,112,162,127,6)}${line(45,100,44,116,6)}${line(44,116,45,130,6)}${line(90,108,95,125,5,'#4a5568')}${line(95,125,80,145,5,'#4a5568')}${line(95,125,110,145,5,'#4a5568')}<line x1="82" y1="126" x2="108" y2="126" stroke="#2d3748" stroke-width="3"/><line x1="95" y1="113" x2="95" y2="139" stroke="#2d3748" stroke-width="3"/><text x="100" y="170" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Diamond Push-Up</text>`,200,183);}
+function svgWidePushup(){return svgWrap(`${head(45,88,12)}${line(45,100,130,112,6)}${line(130,112,164,112,6)}${line(164,112,166,128,6)}${line(45,100,44,116,6)}${line(44,116,14,112,6)}${line(75,108,76,132,5,'#4a5568')}${line(76,132,60,152,5,'#4a5568')}${line(76,132,92,152,5,'#4a5568')}<text x="100" y="172" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Wide Push-Up</text>`,200,183);}
+function svgInclinePushup(){return svgWrap(`<rect x="130" y="95" width="55" height="14" rx="4" fill="#a0aec0"/>${head(35,80,12)}${line(35,92,120,106,6)}${line(120,106,168,100,6)}${line(168,100,169,114,6)}${line(35,92,34,108,6)}${line(34,108,34,122,6)}${line(70,100,70,124,5,'#4a5568')}${line(70,124,56,144,5,'#4a5568')}${line(70,124,84,144,5,'#4a5568')}<text x="100" y="168" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Incline Push-Up</text>`,200,180);}
+function svgPullup(){return svgWrap(`<rect x="20" y="20" width="160" height="8" rx="4" fill="#718096"/>${head(100,45,13)}${line(100,58,100,110,7)}${line(100,70,75,45,6,'#4a5568')}${line(75,45,60,28,5,'#2d3748')}${line(100,70,125,45,6,'#4a5568')}${line(125,45,140,28,5,'#2d3748')}${line(100,110,82,145,6,'#4a5568')}${line(100,110,118,145,6,'#4a5568')}<text x="100" y="175" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Pull-Up</text>`,200,188);}
+function svgSuperman(){return svgWrap(`${head(40,105,12)}${line(40,105,155,112,7)}${line(155,112,185,108,6)}${line(155,112,182,118,6)}${line(40,105,18,100,6,'#4a5568')}${line(18,100,10,93,5,'#4a5568')}${line(130,112,115,130,6,'#4a5568')}${line(115,130,100,148,5,'#4a5568')}${line(155,112,175,130,6,'#4a5568')}${line(175,130,180,148,5,'#4a5568')}<text x="100" y="172" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Superman</text>`,200,183);}
+function svgBentRow(){return svgWrap(`${head(80,40,13)}${line(80,53,80,110,7)}${line(80,53,30,80,6,'#4a5568')}${line(30,80,25,100,5,'#4a5568')}${line(80,53,130,80,6,'#4a5568')}${line(130,80,140,65,5,'#4a5568')}<circle cx="140" cy="63" r="7" fill="#718096"/>${line(80,110,65,150,6,'#4a5568')}${line(80,110,95,150,6,'#4a5568')}<text x="100" y="174" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Bent-Over Row</text>`,200,186);}
+function svgBicepCurl(){return svgWrap(`${head(100,30,14)}${line(100,44,100,105,7)}${line(100,60,75,80,6,'#4a5568')}${line(75,80,65,65,5,'#4a5568')}<circle cx="63" cy="63" r="7" fill="#718096"/>${line(100,60,125,80,6,'#4a5568')}${line(125,80,128,100,5,'#4a5568')}${line(100,105,85,150,6,'#4a5568')}${line(100,105,115,150,6,'#4a5568')}<text x="100" y="175" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Bicep Curl</text>`,200,188);}
+function svgTricepDip(){return svgWrap(`<rect x="30" y="100" width="60" height="12" rx="4" fill="#a0aec0"/><rect x="140" y="100" width="40" height="12" rx="4" fill="#a0aec0"/>${head(100,42,14)}${line(100,56,100,112,7)}${line(100,72,70,100,6,'#4a5568')}${line(70,100,45,104,5,'#4a5568')}${line(100,72,130,100,6,'#4a5568')}${line(130,100,155,104,5,'#4a5568')}${line(100,112,75,148,6,'#4a5568')}${line(75,148,70,162,5,'#4a5568')}${line(100,112,125,148,6,'#4a5568')}${line(125,148,130,162,5,'#4a5568')}<text x="100" y="183" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Tricep Dip</text>`,200,196);}
+function svgPlank(){return svgWrap(`${head(40,95,12)}${line(40,95,165,98,7)}${line(40,95,38,115,6,'#4a5568')}${line(38,115,35,130,5,'#4a5568')}<circle cx="34" cy="133" r="5" fill="#718096"/>${line(100,98,102,120,6,'#4a5568')}${line(102,120,100,138,5,'#4a5568')}<circle cx="100" cy="141" r="5" fill="#718096"/>${line(165,98,166,118,6,'#4a5568')}${line(166,118,164,136,5,'#4a5568')}<circle cx="164" cy="139" r="5" fill="#718096"/><line x1="20" y1="145" x2="185" y2="145" stroke="#cbd5e0" stroke-width="2" stroke-dasharray="4,3"/><text x="100" y="170" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Plank</text>`,200,183);}
+function svgCrunch(){return svgWrap(`<line x1="20" y1="145" x2="185" y2="145" stroke="#cbd5e0" stroke-width="2"/>${head(80,90,13)}${line(80,103,100,120,7)}${line(100,120,140,130,7)}${line(80,103,50,108,6,'#4a5568')}${line(50,108,35,98,5,'#4a5568')}${line(100,120,102,135,6,'#4a5568')}${line(102,135,95,145,5,'#4a5568')}${line(140,130,150,145,5,'#4a5568')}<text x="100" y="172" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Crunch</text>`,200,183);}
+function svgMountainClimber(){return svgWrap(`${head(45,75,12)}${line(45,75,155,88,7)}${line(155,88,178,88,6)}${line(178,88,180,103,6)}${line(45,75,43,90,6,'#4a5568')}${line(43,90,42,106,6,'#4a5568')}${line(110,85,95,108,6,'#4a5568')}${line(95,108,90,125,5,'#4a5568')}${line(130,87,145,110,6,'#4a5568')}${line(145,110,155,130,5,'#4a5568')}<text x="100" y="162" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Mountain Climber</text>`,200,175);}
+function svgLegRaise(){return svgWrap(`<line x1="15" y1="110" x2="185" y2="110" stroke="#cbd5e0" stroke-width="2"/>${head(35,95,12)}${line(35,95,150,108,7)}${line(35,95,32,110,6,'#4a5568')}${line(110,107,125,78,6,'#4a5568')}${line(125,78,145,60,5,'#4a5568')}${line(130,106,150,80,6,'#4a5568')}${line(150,80,165,62,5,'#4a5568')}<text x="100" y="140" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Leg Raise</text>`,200,155);}
+function svgSquat(){return svgWrap(`${head(100,25,14)}${line(100,39,100,95,7)}${line(100,55,72,72,6,'#4a5568')}${line(72,72,60,88,5,'#4a5568')}${line(100,55,128,72,6,'#4a5568')}${line(128,72,140,88,5,'#4a5568')}${line(100,95,82,135,6,'#4a5568')}${line(82,135,75,162,5,'#4a5568')}${line(100,95,118,135,6,'#4a5568')}${line(118,135,125,162,5,'#4a5568')}<text x="100" y="182" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Squat</text>`,200,195);}
+function svgLunge(){return svgWrap(`${head(90,22,13)}${line(90,35,90,90,7)}${line(90,52,65,68,6,'#4a5568')}${line(65,68,55,80,5,'#4a5568')}${line(90,52,115,68,6,'#4a5568')}${line(115,68,125,80,5,'#4a5568')}${line(90,90,75,130,6,'#4a5568')}${line(75,130,50,148,6,'#4a5568')}${line(50,148,48,165,5,'#4a5568')}${line(90,90,110,125,6,'#4a5568')}${line(110,125,115,155,5,'#4a5568')}<line x1="20" y1="165" x2="185" y2="165" stroke="#cbd5e0" stroke-width="2"/><text x="100" y="185" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Forward Lunge</text>`,200,198);}
+function svgCalfRaise(){return svgWrap(`${head(100,22,14)}${line(100,36,100,95,7)}${line(100,55,78,72,6,'#4a5568')}${line(78,72,70,90,5,'#4a5568')}${line(100,55,122,72,6,'#4a5568')}${line(122,72,130,90,5,'#4a5568')}${line(100,95,88,140,6,'#4a5568')}${line(88,140,92,162,5,'#4a5568')}${line(92,162,82,162,4,'#4a5568')}${line(100,95,112,140,6,'#4a5568')}${line(112,140,108,162,5,'#4a5568')}${line(108,162,118,162,4,'#4a5568')}<text x="100" y="183" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Calf Raise</text>`,200,196);}
+function svgWallSit(){return svgWrap(`<rect x="165" y="20" width="12" height="175" rx="4" fill="#a0aec0"/>${head(120,38,14)}${line(120,52,165,60,7)}${line(120,52,100,68,6,'#4a5568')}${line(100,68,85,80,5,'#4a5568')}${line(120,52,122,70,6,'#4a5568')}${line(122,70,128,85,5,'#4a5568')}${line(120,100,65,100,7)}${line(65,100,38,140,6,'#4a5568')}${line(38,140,36,165,5,'#4a5568')}${line(120,100,125,140,6,'#4a5568')}${line(125,140,130,165,5,'#4a5568')}<line x1="20" y1="168" x2="162" y2="168" stroke="#cbd5e0" stroke-width="2"/><text x="90" y="188" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Wall Sit</text>`,200,200);}
+function svgPikePushup(){return svgWrap(`${head(100,28,13)}${line(100,41,100,85,7)}${line(100,55,72,68,6,'#4a5568')}${line(72,68,50,80,5,'#4a5568')}${line(100,55,128,68,6,'#4a5568')}${line(128,68,150,80,5,'#4a5568')}${line(100,85,80,125,6,'#4a5568')}${line(80,125,72,155,5,'#4a5568')}${line(100,85,120,125,6,'#4a5568')}${line(120,125,128,155,5,'#4a5568')}<line x1="50" y1="158" x2="155" y2="158" stroke="#cbd5e0" stroke-width="2"/><text x="100" y="176" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Pike Push-Up</text>`,200,188);}
+function svgLateralRaise(){return svgWrap(`${head(100,25,14)}${line(100,39,100,100,7)}${line(100,60,55,55,6,'#4a5568')}${line(55,55,28,52,5,'#4a5568')}<circle cx="25" cy="51" r="7" fill="#718096"/>${line(100,60,145,55,6,'#4a5568')}${line(145,55,172,52,5,'#4a5568')}<circle cx="175" cy="51" r="7" fill="#718096"/>${line(100,100,85,148,6,'#4a5568')}${line(100,100,115,148,6,'#4a5568')}<text x="100" y="172" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Lateral Raise</text>`,200,185);}
+function svgFrontRaise(){return svgWrap(`${head(100,25,14)}${line(100,39,100,100,7)}${line(100,58,75,72,6,'#4a5568')}${line(75,72,60,90,5,'#4a5568')}${line(100,58,125,50,6,'#4a5568')}${line(125,50,148,35,5,'#4a5568')}<circle cx="150" cy="33" r="7" fill="#718096"/>${line(100,100,85,148,6,'#4a5568')}${line(100,100,115,148,6,'#4a5568')}<text x="100" y="172" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Front Raise</text>`,200,185);}
+function svgShoulderPress(){return svgWrap(`${head(100,25,14)}${line(100,39,100,100,7)}${line(100,58,70,65,6,'#4a5568')}${line(70,65,52,45,5,'#4a5568')}<circle cx="50" cy="42" r="7" fill="#718096"/>${line(100,58,130,65,6,'#4a5568')}${line(130,65,148,45,5,'#4a5568')}<circle cx="150" cy="42" r="7" fill="#718096"/>${line(100,100,85,148,6,'#4a5568')}${line(100,100,115,148,6,'#4a5568')}<text x="100" y="172" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="600">Shoulder Press</text>`,200,185);}
+
+function selectMuscle(name, btn) {
+  document.querySelectorAll('.muscle-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const data = exercises[name];
+  document.getElementById('ex-heading').textContent = data.heading;
+  document.getElementById('ex-sub').textContent = data.sub;
+  document.getElementById('exercise-cards').innerHTML = data.list.map(ex => `
+    <div class="ex-card">
+      <div class="ex-card-fig">${ex.svg}</div>
+      <div class="ex-card-body">
+        <h3>${ex.name}</h3>
+        <div class="ex-meta"><span class="ex-badge">${ex.sets}</span><span class="ex-badge orange">${ex.level}</span></div>
+        <p>${ex.desc}</p>
+        <div class="ex-tips"><span>💡 Pro Tip</span><p>${ex.tip}</p></div>
+      </div>
+    </div>`).join('');
+}
+
+selectMuscle('chest', document.querySelector('.muscle-btn.selected'));
+</script>
+</body>
+</html>

@@ -1,1 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitFuture – Your Health & Fitness Guide</title>
+<style>
+  :root {
+    --green: #00c853;
+    --green-dark: #009624;
+    --navy: #0d1b2a;
+    --navy-mid: #1b2e42;
+    --white: #ffffff;
+    --light: #f4f9f4;
+    --muted: #6b7c93;
+    --card-bg: #ffffff;
+    --border: #e2ece2;
+    --accent: #ff6b35;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--light); color: var(--navy); }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 1000;
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 64px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.4);
+  }
+  .nav-logo { color: var(--green); font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; cursor: pointer; }
+  .nav-logo span { color: var(--white); }
+  .nav-links { display: flex; gap: .25rem; }
+  .nav-links button {
+    background: none; border: none; color: #cdd9e5;
+    padding: .5rem 1rem; border-radius: 8px;
 
